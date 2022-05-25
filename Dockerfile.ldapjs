@@ -1,0 +1,10 @@
+FROM node:lts-alpine3.14 AS build
+
+WORKDIR /srv/app
+
+RUN apk add -uv \
+    openldap-clients
+
+COPY . .
+
+CMD ["node", "index"]
