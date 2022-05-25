@@ -1,0 +1,44 @@
+version: "3.7"
+
+networks:
+  application: {}
+
+services:
+  ldapjs:
+    ports:
+    - 1389:1389
+    volumes:
+    - .:/srv/app
+    networks:
+    - application
+    build:
+      context: .
+      dockerfile: Dockerfile.ldapjs
+
+  openldap:
+    image: osixia/openldap
+    environment:
+      LDAP_ORGANISATION: Hoobox
+      LDAP_ADMIN_PASSWORD: abc123
+    networks:
+    - application
+
+  phpldapadmin:
+    ports:
+    - 6441:443
+    networks:
+    - application    
+    build:
+      context: .
+      dockerfile: Dockerfile.phpldapadmin
+
+  keycloak:
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: abc123
+    networks:
+    - application
+    ports:
+    - 8080:8080
+    image: quay.io/keycloak/keycloak:18.0.0
+    command: start-dev
